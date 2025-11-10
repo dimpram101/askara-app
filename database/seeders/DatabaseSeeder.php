@@ -13,19 +13,42 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create admin user
-        User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@example.com',
-        ]);
+        // Create roles first
+        $this->call(RoleSeeder::class);
 
-        // Create test user
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Create Dinkes user (admin)
+        $dinkes = User::factory()->create([
+            'name' => 'Admin Dinkes',
+            'email' => 'dinkes@example.com',
         ]);
+        $dinkes->assignRole('Dinkes');
 
-        // Create additional sample users for testing
-        User::factory(8)->create();
+        // Create Fasyankes users
+        $fasyankes1 = User::factory()->create([
+            'name' => 'Fasyankes RS Umum',
+            'email' => 'fasyankes1@example.com',
+        ]);
+        $fasyankes1->assignRole('Fasyankes');
+
+        $fasyankes2 = User::factory()->create([
+            'name' => 'Fasyankes Puskesmas',
+            'email' => 'fasyankes2@example.com',
+        ]);
+        $fasyankes2->assignRole('Fasyankes');
+
+        // Create Pasien users
+        $pasien1 = User::factory()->create([
+            'name' => 'Pasien Test',
+            'email' => 'pasien@example.com',
+        ]);
+        $pasien1->assignRole('Pasien');
+
+        // Create additional users with random roles
+        $additionalUsers = User::factory(6)->create();
+        $roles = ['Fasyankes', 'Dinkes', 'Pasien'];
+
+        foreach ($additionalUsers as $user) {
+            $user->assignRole($roles[array_rand($roles)]);
+        }
     }
 }

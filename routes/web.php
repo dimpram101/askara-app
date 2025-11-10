@@ -16,10 +16,10 @@ Route::get('/ai-cxr-diagnose', function () {
 
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified', 'check.dashboard'])->name('dashboard');
 
 // User Management Routes
-Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
+Route::middleware(['auth', 'verified', 'check.dashboard'])->prefix('dashboard')->name('dashboard.')->group(function () {
     Route::resource('users', \App\Http\Controllers\UserController::class)->except(['show', 'create', 'edit']);
 });
 
