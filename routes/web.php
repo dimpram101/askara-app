@@ -10,8 +10,17 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+Route::get('/ai-cxr-diagnose', function () {
+   return inertia('AiDiagnose');
+});
+
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// User Management Routes
+Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
+    Route::resource('users', \App\Http\Controllers\UserController::class)->except(['show', 'create', 'edit']);
+});
 
 require __DIR__.'/settings.php';

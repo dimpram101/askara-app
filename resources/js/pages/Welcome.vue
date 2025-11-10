@@ -18,26 +18,33 @@ withDefaults(
    <AppLocalLayout>
       <!-- Hero Section -->
       <div class="container mx-auto px-6 py-12">
-         <div class="overflow-hidden rounded-3xl bg-[#76C6D1] shadow-2xl">
+         <div class="relative rounded-3xl bg-[#76C6D1] shadow-2xl mt-12">
             <div class="flex flex-col items-center lg:flex-row">
                <!-- Hero Text -->
-               <div class="p-12 lg:w-1/2 lg:p-16">
-                  <h1 class="mb-6 text-5xl font-bold text-white lg:text-6xl">
-                     ASKARA
+               <div class="relative z-10 p-12 lg:w-3/5 lg:p-16">
+                  <h1 class="mb-6 text-5xl font-bold leading-tight text-white lg:text-6xl">
+                     Diagnose Lung Diseases<br />with AI Precission
                   </h1>
-                  <p class="text-xl leading-relaxed text-white/90">
+                  <p class="mb-8 text-xl leading-relaxed text-white/90">
                      An integrated platform with a smart dashboard and
-                     AI-powered tools to diagnose lung diseases
+                     AI-powered tools to diagnose lung diseases.<br />
+                     Anytime. Anywhere.
                   </p>
+                  <Link
+                     href="/ai-cxr-diagnose"
+                     class="inline-block transform rounded-full bg-yellow-400 px-8 py-3 text-base font-semibold text-white shadow-lg transition hover:scale-105 hover:bg-yellow-500"
+                  >
+                     Start Screening
+                  </Link>
                </div>
 
-               <!-- Hero Image -->
-               <div class="flex items-center justify-center p-8 lg:w-1/2">
+               <!-- Hero Image - Fixed Position -->
+               <div class="relative xl:right-20 xl:absolute xl:-top-[50px] xl:bottom-0">
                   <div class="relative">
                      <img
-                        src="/assets/images/hero-logo.png"
+                        src="/assets/images/hero-2-logo.png"
                         alt="Medical Illustration"
-                        class="w-full max-w-lg"
+                        class="w-full max-w-md xl:scale-120 lg:max-w-lg"
                         onerror="this.style.display='none'"
                      />
                   </div>
@@ -54,19 +61,11 @@ withDefaults(
             >
                <div class="flex items-start space-x-4">
                   <div class="flex-shrink-0 rounded-xl bg-yellow-100 p-4">
-                     <svg
+                     <img
+                        src="/assets/images/ai_icon.png"
+                        alt="AI-CXR Icon"
                         class="h-12 w-12 text-yellow-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                     >
-                        <path
-                           stroke-linecap="round"
-                           stroke-linejoin="round"
-                           stroke-width="2"
-                           d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        />
-                     </svg>
+                     />
                   </div>
                   <div>
                      <h3 class="mb-2 text-xl font-bold text-gray-800">
@@ -85,19 +84,11 @@ withDefaults(
             >
                <div class="flex items-start space-x-4">
                   <div class="flex-shrink-0 rounded-xl bg-cyan-100 p-4">
-                     <svg
-                        class="h-12 w-12 text-[#76C6D1]"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                     >
-                        <path
-                           stroke-linecap="round"
-                           stroke-linejoin="round"
-                           stroke-width="2"
-                           d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                        />
-                     </svg>
+                     <img
+                        src="/assets/images/chatbot_icon.png"
+                        alt="Chatbot Icon"
+                        class="h-12 w-12 text-cyan-500"
+                     />
                   </div>
                   <div>
                      <h3 class="mb-2 text-xl font-bold text-gray-800">
@@ -117,19 +108,11 @@ withDefaults(
             >
                <div class="flex items-start space-x-4">
                   <div class="flex-shrink-0 rounded-xl bg-blue-100 p-4">
-                     <svg
+                     <img
+                        src="/assets/images/hotspot_icon.png"
+                        alt="Dashboard Icon"
                         class="h-12 w-12 text-blue-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                     >
-                        <path
-                           stroke-linecap="round"
-                           stroke-linejoin="round"
-                           stroke-width="2"
-                           d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                        />
-                     </svg>
+                     />
                   </div>
                   <div>
                      <h3 class="mb-2 text-xl font-bold text-gray-800">
@@ -144,14 +127,5 @@ withDefaults(
          </div>
       </div>
 
-      <!-- Start Screening Button -->
-      <div class="container mx-auto flex justify-center px-6 py-8 pb-16">
-         <Link
-            href="/ai-cxr-diagnose"
-            class="transform rounded-full bg-yellow-400 px-12 py-4 text-lg font-semibold text-white shadow-lg transition hover:scale-105 hover:bg-yellow-500 hover:shadow-xl"
-         >
-            Start Screening
-         </Link>
-      </div>
    </AppLocalLayout>
 </template>
