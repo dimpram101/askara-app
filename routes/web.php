@@ -23,4 +23,10 @@ Route::middleware(['auth', 'verified', 'check.dashboard'])->prefix('dashboard')-
     Route::resource('users', \App\Http\Controllers\UserController::class)->except(['show', 'create', 'edit']);
 });
 
+// Profile Routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+});
+
 require __DIR__.'/settings.php';

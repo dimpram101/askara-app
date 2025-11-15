@@ -96,6 +96,15 @@ const handleLogout = () => {
                      Dashboard
                   </Link>
 
+                  <!-- Profile Link -->
+                  <Link
+                     href="/profile"
+                     class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
+                  >
+                     <Icon icon="mdi:account-cog" class="mr-3 h-5 w-5 text-gray-500" />
+                     Profile
+                  </Link>
+
                   <!-- Logout Button -->
                   <Link
                      :href="logout()"

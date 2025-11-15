@@ -31,6 +31,20 @@ export interface Role {
     name: string;
 }
 
+export interface UserProfile {
+    id?: number;
+    user_id?: number;
+    nik?: string;
+    phone_number?: string;
+    address?: string;
+    date_of_birth?: string;
+    gender?: string;
+    province?: string;
+    city?: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
 export interface User {
     id: number;
     name: string;
@@ -40,6 +54,7 @@ export interface User {
     created_at: string;
     updated_at: string;
     roles?: Role[];
+    profile?: UserProfile;
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;

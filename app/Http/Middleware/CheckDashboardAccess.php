@@ -24,7 +24,7 @@ class CheckDashboardAccess
 
         // Check if user has Pasien role
         if ($user->hasRole('Pasien')) {
-            abort(403, 'Access denied. Patients cannot access the dashboard.');
+            return redirect('/')->with('error', 'Access denied.');
         }
 
         return $next($request);
