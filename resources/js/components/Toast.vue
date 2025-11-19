@@ -10,7 +10,6 @@ const message = ref('');
 const type = ref<'success' | 'error' | 'info' | 'warning'>('success');
 
 const flash = computed(() => page.props.flash as Record<string, string | null>);
-console.log(flash);
 
 watch(
     flash,

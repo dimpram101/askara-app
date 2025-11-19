@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PengobatanSOController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -13,6 +14,9 @@ Route::get('/', function () {
 Route::get('/ai-cxr-diagnose', function () {
    return inertia('AiDiagnose');
 });
+
+Route::get('/hotspot-map', [PengobatanSOController::class, 'index'])->name('hotspot_map');
+Route::get('/pengobatan_so_2023', [PengobatanSOController::class, 'getData'])->name('pengobatan_so_2023');
 
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
