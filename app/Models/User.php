@@ -59,6 +59,13 @@ class User extends Authenticatable {
       return $this->hasOne(UserProfile::class);
    }
 
+   /**
+    * Get the user's prediction history.
+    */
+   public function predictionHistory() {
+      return $this->hasMany(PredictionHistory::class);
+   }
+
    public function getRoleNamesAttribute() {
       return $this->getRoleNames();
    }

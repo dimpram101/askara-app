@@ -14,6 +14,10 @@ class PredictionHistory extends Model implements HasMedia {
 
    protected $guarded = ['id'];
 
+   protected $casts = [
+      'predicted_at' => 'datetime',
+   ];
+
    public function registerMediaCollections(): void {
       $this->addMediaCollection('predictions')
          ->useDisk('public')->singleFile();

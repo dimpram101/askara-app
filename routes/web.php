@@ -23,6 +23,11 @@ Route::get('dashboard', function () {
 // User Management Routes
 Route::middleware(['auth', 'verified', 'check.dashboard'])->prefix('dashboard')->name('dashboard.')->group(function () {
    Route::resource('users', \App\Http\Controllers\UserController::class)->except(['show', 'create', 'edit']);
+
+   // Predictions list for Fasyankes only
+   Route::get('/predictions', [\App\Http\Controllers\PredictionHistoryController::class, 'index'])
+      ->middleware('role.fasyankes')
+      ->name('predictions');
 });
 
 // Profile Routes
@@ -30,6 +35,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
    Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
    Route::put('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
    Route::resource('/ai-cxr-diagnose', AiDiagnoseController::class)->only(['index', 'store']);
+});
+
+// Prediction History for Pasien only
+Route::middleware(['auth', 'verified'])->group(function () {
+   Route::middleware('role:Pasien,Fasyankes')->get('/prediction-history', [\App\Http\Controllers\PredictionHistoryController::class, 'history'])
+      ->name('prediction.history.pasien');
+   // Route::middleware('role.fasyankes')->get('/prediction-history', [\App\Http\Controllers\PredictionHistoryController::class, 'history'])
+   //    ->name('prediction.history.fasyankes');
 });
 
 require __DIR__ . '/settings.php';

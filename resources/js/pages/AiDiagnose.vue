@@ -247,7 +247,7 @@ const handleSubmit = async () => {
       });
 
       const data: DiagnosisResponse = await response.json();
-
+      console.log(data);
       if (data.success) {
          diagnosisResult.value = data;
          form.diagnosis = data;

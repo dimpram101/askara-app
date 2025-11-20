@@ -9,6 +9,7 @@ import { ref } from 'vue';
 import accountCircle from '@iconify-icons/mdi/account-circle';
 import viewDashboard from '@iconify-icons/mdi/view-dashboard';
 import accountCog from '@iconify-icons/mdi/account-cog';
+import { History } from 'lucide-vue-next';
 
 const page = usePage();
 const user = page.props.auth.user;
@@ -106,6 +107,11 @@ const isActive = (path: string) => {
                   <Link href="/profile" class="flex items-center px-4 py-2 text-sm text-gray-700 transition hover:bg-gray-50">
                      <Icon :icon="accountCog" class="mr-3 h-5 w-5 text-gray-500" />
                      Profile
+                  </Link>
+
+                  <Link href="/prediction-history" class="flex items-center px-4 py-2 text-sm text-gray-700 transition hover:bg-gray-50">
+                     <History class="mr-3 h-5 w-5 text-gray-500" />
+                     Prediction
                   </Link>
 
                   <!-- Logout Button -->
