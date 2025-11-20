@@ -1,36 +1,35 @@
 <?php
 
+use App\Http\Controllers\AiDiagnoseController;
 use App\Http\Controllers\PengobatanSOController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canRegister' => Features::enabled(Features::registration()),
-    ]);
+   return Inertia::render('Welcome', [
+      'canRegister' => Features::enabled(Features::registration()),
+   ]);
 })->name('home');
 
-Route::get('/ai-cxr-diagnose', function () {
-   return inertia('AiDiagnose');
-});
 
 Route::get('/hotspot-map', [PengobatanSOController::class, 'index'])->name('hotspot_map');
 Route::get('/pengobatan_so_2023', [PengobatanSOController::class, 'getData'])->name('pengobatan_so_2023');
 
 Route::get('dashboard', function () {
-    return Inertia::render('Dashboard');
+   return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified', 'check.dashboard'])->name('dashboard');
 
 // User Management Routes
 Route::middleware(['auth', 'verified', 'check.dashboard'])->prefix('dashboard')->name('dashboard.')->group(function () {
-    Route::resource('users', \App\Http\Controllers\UserController::class)->except(['show', 'create', 'edit']);
+   Route::resource('users', \App\Http\Controllers\UserController::class)->except(['show', 'create', 'edit']);
 });
 
 // Profile Routes
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+   Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+   Route::put('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+   Route::resource('/ai-cxr-diagnose', AiDiagnoseController::class)->only(['index', 'store']);
 });
 
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';
