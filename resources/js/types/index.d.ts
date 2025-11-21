@@ -54,6 +54,7 @@ export interface User {
     created_at: string;
     updated_at: string;
     roles?: Role[];
+    role_names?: string[];
     profile?: UserProfile;
 }
 

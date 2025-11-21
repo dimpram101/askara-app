@@ -10,18 +10,66 @@
             from X-ray images.
          </p>
 
-         <!-- NIK Input -->
-         <div class="flex flex-col items-start">
-            <label for="NIK" class="mb-1 font-medium">NIK</label>
-            <input
-               type="text"
-               id="NIK"
-               v-model="form.nik"
-               :readonly="user.profile?.nik !== null"
-               class="mt-1 mb-4 w-96 rounded border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none disabled:bg-gray-100"
-               placeholder="Enter NIK"
-            />
-            <div v-if="form.errors.nik" class="text-sm text-red-500">
+         <!-- NIK Input with Search for Fasyankes -->
+         <div class="mb-6 flex flex-col items-start">
+            <label for="NIK" class="mb-1 font-medium">
+               {{ isFasyankes ? 'NIK / Cari Pasien' : 'NIK' }}
+            </label>
+            <div class="nik-search-container relative w-full max-w-2xl">
+               <input
+                  type="text"
+                  id="NIK"
+                  v-model="form.nik"
+                  :readonly="isPasien && user.profile?.nik !== null"
+                  @input="isFasyankes ? searchPatients() : null"
+                  @focus="isFasyankes ? (showDropdown = true) : null"
+                  class="w-full rounded border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none disabled:bg-gray-100"
+                  :placeholder="
+                     isFasyankes
+                        ? 'Ketik NIK atau nama pasien untuk mencari...'
+                        : 'Enter NIK'
+                  "
+               />
+               <!-- Dropdown Results for Fasyankes -->
+               <div
+                  v-if="
+                     isFasyankes &&
+                     showDropdown &&
+                     form.nik &&
+                     form.nik.length >= 2
+                  "
+                  class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-gray-300 bg-white shadow-lg"
+               >
+                  <div v-if="isSearching" class="px-4 py-2 text-gray-500">
+                     Mencari...
+                  </div>
+                  <div
+                     v-else-if="searchResults.length === 0"
+                     class="px-4 py-2 text-gray-500"
+                  >
+                     Pasien tidak ditemukan. Anda dapat tetap melanjutkan dengan
+                     NIK ini.
+                  </div>
+                  <button
+                     v-else
+                     v-for="patient in searchResults"
+                     :key="patient.id"
+                     type="button"
+                     @click="selectPatient(patient)"
+                     class="w-full px-4 py-2 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none"
+                  >
+                     <div class="font-medium">{{ patient.name }}</div>
+                     <div class="text-sm text-gray-600">
+                        NIK: {{ patient.nik || '-' }}
+                     </div>
+                  </button>
+               </div>
+            </div>
+            <p v-if="isFasyankes" class="mt-2 text-sm text-gray-600">
+               Ketik minimal 2 karakter untuk mencari pasien, atau isi NIK
+               secara manual
+            </p>
+            <div v-if="form.errors.nik" class="mt-2 text-sm text-red-500">
                {{ form.errors.nik }}
             </div>
          </div>
@@ -106,7 +154,9 @@
 
          <!-- Loading Indicator -->
          <div v-if="isAnalyzing" class="mt-6 text-center">
-            <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
+            <div
+               class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"
+            ></div>
             <p class="mt-2 text-gray-500">Analyzing image, please wait...</p>
          </div>
 
@@ -143,10 +193,10 @@
 
 <script lang="ts" setup>
 import AppLocalLayout from '@/layouts/AppLocalLayout.vue';
-import DiagnosisResult from './components/DiagnosisResult.vue';
-import Swal from 'sweetalert2';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import Swal from 'sweetalert2';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
+import DiagnosisResult from './components/DiagnosisResult.vue';
 
 interface ClinicalExplanation {
    ringkasan_diagnosis: string;
@@ -175,9 +225,20 @@ interface DiagnosisResponse {
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 
+// Check user role
+const isPasien = computed(() => user.value.role_names?.includes('Pasien'));
+const isFasyankes = computed(() =>
+   user.value.role_names?.includes('Fasyankes'),
+);
+
+// Patient search states for Fasyankes
+const searchResults = ref<any[]>([]);
+const showDropdown = ref(false);
+const isSearching = ref(false);
+
 // Menggunakan useForm dari Inertia
 const form = useForm({
-   nik: user.value.profile?.nik || '',
+   nik: isPasien.value ? user.value.profile?.nik || '' : '',
    image: null as File | null,
    diagnosis: null as DiagnosisResponse | null,
 });
@@ -187,6 +248,65 @@ const imagePreview = ref<string | null>(null);
 const isDragging = ref(false);
 const isAnalyzing = ref(false);
 const diagnosisResult = ref<DiagnosisResponse | null>(null);
+
+// Patient search functions for Fasyankes
+const searchPatients = async () => {
+   if (!form.nik || form.nik.length < 2) {
+      searchResults.value = [];
+      return;
+   }
+
+   isSearching.value = true;
+   showDropdown.value = true;
+
+   try {
+      console.log('Searching for:', form.nik);
+      const response = await fetch(
+         `/search-patients?search=${encodeURIComponent(form.nik)}`,
+      );
+
+      if (!response.ok) {
+         throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Search results:', data);
+      searchResults.value = data;
+   } catch (error) {
+      console.error('Error searching patients:', error);
+      searchResults.value = [];
+   } finally {
+      isSearching.value = false;
+   }
+};
+
+const selectPatient = (patient: any) => {
+   form.nik = patient.nik || '';
+   showDropdown.value = false;
+   searchResults.value = [patient];
+};
+
+// Close dropdown when clicking outside
+const handleClickOutside = (e: MouseEvent) => {
+   const target = e.target as HTMLElement;
+   // Check if click is outside the NIK input and dropdown container
+   if (!target.closest('.nik-search-container')) {
+      showDropdown.value = false;
+   }
+};
+
+// Setup event listeners
+onMounted(() => {
+   if (typeof window !== 'undefined') {
+      window.addEventListener('click', handleClickOutside);
+   }
+});
+
+onUnmounted(() => {
+   if (typeof window !== 'undefined') {
+      window.removeEventListener('click', handleClickOutside);
+   }
+});
 
 const handleDrop = (e: DragEvent) => {
    isDragging.value = false;
@@ -222,8 +342,12 @@ const handleFile = (file: File) => {
 
 const resetForm = () => {
    form.reset();
+   // Reset NIK kembali ke nilai awal berdasarkan role
+   form.nik = isPasien.value ? user.value.profile?.nik || '' : '';
    imagePreview.value = null;
    diagnosisResult.value = null;
+   searchResults.value = [];
+   showDropdown.value = false;
    if (fileInputRef.value) {
       fileInputRef.value.value = '';
    }

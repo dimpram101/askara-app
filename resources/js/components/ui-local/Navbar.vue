@@ -3,17 +3,33 @@ import { logout } from '@/routes';
 import { Icon } from '@iconify/vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { LogOut } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 // 🔥 IMPORT ICONIFY ICONS (local, offline)
 import accountCircle from '@iconify-icons/mdi/account-circle';
 import viewDashboard from '@iconify-icons/mdi/view-dashboard';
 import accountCog from '@iconify-icons/mdi/account-cog';
+import monitorDashboard from '@iconify-icons/mdi/monitor-dashboard';
 import { History } from 'lucide-vue-next';
 
 const page = usePage();
 const user = page.props.auth.user;
 const showDropdown = ref(false);
+const dropdownRef = ref<HTMLElement | null>(null);
+
+const handleClickOutside = (event: MouseEvent) => {
+   if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
+      showDropdown.value = false;
+   }
+};
+
+onMounted(() => {
+   document.addEventListener('mousedown', handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+   document.removeEventListener('mousedown', handleClickOutside);
+});
 
 const handleLogout = () => {
    router.flushAll();
@@ -22,6 +38,8 @@ const handleLogout = () => {
 const isActive = (path: string) => {
    return page.url === path;
 };
+
+const isFasyankes = user?.role_names?.includes('Fasyankes');
 </script>
 
 <template>
@@ -63,8 +81,6 @@ const isActive = (path: string) => {
                   AI-CXR DIAGNOSE
                </Link>
             </div>
-
-            <!-- Auth Buttons -->
             <div class="flex items-center space-x-4" v-if="!user">
                <Link href="/login" class="font-medium text-[#76C6D1] transition hover:text-cyan-600">
                   SIGN IN
@@ -78,8 +94,8 @@ const isActive = (path: string) => {
             <div
                class="relative"
                v-else
-               @mouseenter="showDropdown = true"
-               @mouseleave="showDropdown = false"
+               @click="showDropdown = !showDropdown"
+               ref="dropdownRef"
             >
                <!-- Avatar Circle -->
                <div class="flex cursor-pointer items-center">
@@ -98,6 +114,12 @@ const isActive = (path: string) => {
                   </div>
 
                   <!-- Dashboard Link -->
+                  <Link v-if="isFasyankes" href="/dashboard" class="flex items-center px-4 py-2 text-sm text-gray-700 transition hover:bg-gray-50">
+                     <Icon :icon="monitorDashboard" class="mr-3 h-5 w-5 text-gray-500" />
+                     Dashboard
+                  </Link>
+
+                  <!-- Hotspot Link -->
                   <Link href="/hotspot-map" class="flex items-center px-4 py-2 text-sm text-gray-700 transition hover:bg-gray-50">
                      <Icon :icon="viewDashboard" class="mr-3 h-5 w-5 text-gray-500" />
                      Dashboard Hotspot

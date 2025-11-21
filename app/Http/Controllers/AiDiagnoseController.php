@@ -10,11 +10,44 @@ use Illuminate\Support\Facades\DB;
 class AiDiagnoseController extends Controller {
    public function index(Request $request) {
       $user = $request->user();
-      if (!$user->profile || ($user->profile && !$user->profile->nik)) {
-         return redirect('/profile')->with('error', 'Please complete your profile with a valid NIK before accessing AI Diagnose.');
+
+      // Only check NIK for Pasien role, Fasyankes can access without NIK
+      if ($user->hasRole('Pasien')) {
+         if (!$user->profile || !$user->profile->nik) {
+            return redirect('/profile')->with('error', 'Please complete your profile with a valid NIK before accessing AI Diagnose.');
+         }
       }
 
       return inertia('AiDiagnose');
+   }
+
+   public function searchPatients(Request $request) {
+      $search = $request->get('search', '');
+
+      $patients = User::role('Pasien')
+         ->with('profile')
+         ->where(function ($query) use ($search) {
+            // Search by name
+            $query->where('name', 'like', "%{$search}%")
+                  // OR search by NIK if profile exists
+                  ->orWhereHas('profile', function ($q) use ($search) {
+                     $q->where('nik', 'like', "%{$search}%");
+                  });
+         })
+         ->limit(10)
+         ->get()
+         ->map(function ($user) {
+            return [
+               'id' => $user->id,
+               'name' => $user->name,
+               'nik' => $user->profile?->nik ?? null,
+               'label' => $user->profile?->nik
+                  ? "{$user->name} (NIK: {$user->profile->nik})"
+                  : $user->name,
+            ];
+         });
+
+      return response()->json($patients);
    }
 
    public function store(Request $request) {
@@ -25,6 +58,7 @@ class AiDiagnoseController extends Controller {
 
       // dd($request->all());
 
+      // Find user by NIK if exists, if not found it's okay (NIK doesn't have to be registered)
       $user = User::whereHas('profile', function ($query) use ($request) {
          $query->where('nik', $request->nik);
       })->first();
