@@ -166,6 +166,11 @@
             :result="diagnosisResult"
          />
 
+         <!-- ChatBot - Appears after diagnosis -->
+         <div v-if="diagnosisResult && !isAnalyzing" class="mt-8">
+            <ChatBot :diagnosisResult="diagnosisResult" />
+         </div>
+
          <!-- Action Buttons -->
          <div
             v-if="diagnosisResult && !form.processing"
@@ -197,6 +202,7 @@ import { Head, useForm, usePage } from '@inertiajs/vue3';
 import Swal from 'sweetalert2';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import DiagnosisResult from './components/DiagnosisResult.vue';
+import ChatBot from '@/components/ChatBot.vue';
 
 interface ClinicalExplanation {
    ringkasan_diagnosis: string;

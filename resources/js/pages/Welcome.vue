@@ -23,7 +23,7 @@ withDefaults(
                <!-- Hero Text -->
                <div class="relative z-10 p-12 lg:w-3/5 lg:p-16">
                   <h1 class="mb-6 text-5xl font-bold leading-tight text-white lg:text-6xl">
-                     Diagnose Lung Diseases<br />with AI Precission
+                     Diagnose Lung Diseases<br />with AI Precision
                   </h1>
                   <p class="mb-8 text-xl leading-relaxed text-white/90">
                      An integrated platform with a smart dashboard and
